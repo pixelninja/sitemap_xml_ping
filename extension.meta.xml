@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension id="sitemap_xml_ping" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+	<name>Sitemap XML Ping</name>
+	<description>Notify Google/Bing when entries in a section relating to the sitemap is updated automatically</description>
+	<repo type="github">https://github.com/pixelninja/sitemap_xml_ping</repo>
+	<url type="discuss">http://symphony-cms.com/discuss/thread/83334/</url>
+	<types>
+		<type>Workflow</type>
+	</types>
+	<authors>
+		<author>
+			<name github="pixelninja" symphony="touchstone">Phillip Gray</name>
+			<website>http://www.touchstone-dev.co.nz</website>
+		</author>
+	</authors>
+	<releases>
+		<release version="1.0" date="2012-01-18" min="2.2" />
+	</releases>
+</extension>

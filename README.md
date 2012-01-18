@@ -16,3 +16,7 @@ Use this extension in conjunction with [Sitemap XML](http://symphony-cms.com/dow
 ## Configuration
 
 On the preferences page there will be a new section called `Sitemap XML Ping`. This is where you select the sections and input your authentication code. To retrieve this code, go to System -> Authors and either edit your own entry or create a new one specifically for this purpose. You need to check the `Allow remote login` checkbox and copy the random string at the end of the url (no slashes). Paste the token into the corresponding field in the preferences page.
+
+## Limitations
+
+Due to Symphony not yet having a post delete delegate, the auto pinging won't work when you delete an entry. You will either have to update another entry, or manually ping it in the System -> Sitemap XML page.

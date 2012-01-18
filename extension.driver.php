@@ -18,7 +18,7 @@
 						'email' => 'phill@randb.com.au'
 					),
 				),
-				'description'	=> 'A simple extension that notifies Google Webmaster of updated content using their Pinging API.'
+				'description'	=> 'Notify Google/Bing when entries in a section relating to the sitemap is updated automatically.'
 	 		);
 		}
 
@@ -118,7 +118,10 @@
 			// Make sure a Ping URL is set.
 			if(is_null($url)) return;
 			
-			// Refresh Sitemap
+			// Make sure a Token is set.
+			if(is_null($token)) return;
+			
+			// Update sitemap first
 			$s = new Gateway;
 			$s->init(URL . '/symphony/extension/sitemap_xml/raw/?auth-token='.$token);
 			
