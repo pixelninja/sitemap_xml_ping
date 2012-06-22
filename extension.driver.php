@@ -126,8 +126,6 @@
 			$token = $this->get('access_token');
 			
 			// test section for post delete
-			//$page = Administration::instance()->Page;
-			//$page = $page['context'];
 			$page_callback = Administration::instance()->getPageCallback();
 			$page_driver = $page_callback['driver'];							
 			$page_context = $page_callback['context'];							
