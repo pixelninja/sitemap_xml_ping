@@ -32,12 +32,17 @@
 				array(
 					'page' => '/publish/new/',
 					'delegate' => 'EntryPostCreate',
-					'callback' => 'entryPostEdit'
+					'callback' => 'pingServices'
 				),
 				array(
 					'page' => '/publish/edit/',
 					'delegate' => 'EntryPostEdit',
-					'callback' => 'entryPostEdit'
+					'callback' => 'pingServices'
+				),
+				array(
+					'page' => '/publish/',
+					'delegate' => 'EntryPostDelete',
+					'callback' => 'pingServices'
 				)
 			);
 		}
@@ -61,8 +66,11 @@
 			$fieldset->setAttribute('class', 'settings');
 			$fieldset->appendChild(new XMLElement('legend', 'Sitemap XML Ping'));
 
+			$parent = new XMLElement('div');
+			$parent->setAttribute('class', 'two columns');
+
 			$group = new XMLElement('div');
-			$group->setAttribute('class', 'group');
+			$group->setAttribute('class', 'column');
 
 			// Monitor sections
 			$options = array();
@@ -78,16 +86,21 @@
 
 			$label->appendChild($input);
 			$group->appendChild($label);
+			$parent->appendChild($group);
+			
+			$group = new XMLElement('div');
+			$group->setAttribute('class', 'column');
 
 			// Send this URL
 			$label = Widget::Label(__('Ping URL'));
 			//$input = Widget::Input('settings[sitemap_xml_ping_url]', URL.'/sitemap.xml', null, array('readonly' => 'readonly'));
-			$input = Widget::Input('settings[' . self::$config_handle . '][ping_url]', URL.'/sitemap.xml', null, array('readonly' => 'readonly'));
+			$input = Widget::Input('settings[' . self::$config_handle . '][ping_url]', URL.'/sitemap.xml', null, array('readonly' => 'readonly', 'type' => 'text'));
 			$label->appendChild($input);
 			
 			$group->appendChild($label);
 
-			$fieldset->appendChild($group);
+			$parent->appendChild($group);
+			$fieldset->appendChild($parent);
 
 			$group = new XMLElement('div');
 
@@ -106,14 +119,26 @@
 			$wrapper->appendChild($fieldset);
 		}
 
-		public function entryPostEdit(Array &$context) {
+		public function pingServices(Array &$context) {
 			// Store url and section in variables
 			$sections = $this->get('ping_sections');
 			$url = $this->get('ping_url');
 			$token = $this->get('access_token');
 			
+			// test section for post delete
+			//$page = Administration::instance()->Page;
+			//$page = $page['context'];
+			$page_callback = Administration::instance()->getPageCallback();
+			$page_driver = $page_callback['driver'];							
+			$page_context = $page_callback['context'];							
+			$section_id = SectionManager::fetchIDFromHandle($page_context['section_handle']);
+			
 			// Check the Entry is being edited in the right section, otherwise return
-			if($context['section']->get('id') != $sections) return;
+			if($page_driver == 'publish') {
+				if($section_id != $sections) return;
+			} else {
+				if($context['section']->get('id') != $sections) return;
+			}
 
 			// Make sure a Ping URL is set.
 			if(is_null($url)) return;
@@ -146,6 +171,9 @@
 			$b_result = $b->exec();
 			if(isset(Symphony::$Log)) Symphony::$Log->pushToLog(__('Sitemap XML Ping: (Bing) ') . $b_result, E_USER_NOTICE, true);
 			$b_info = $b->getInfoLast();
+			
+//			var_dump($g_info['http_code']);
+//			var_dump($b_info['http_code']);
 			
 			return $g_info['http_code'] == 200 && $b_info['http_code'] == 200;
 		}
