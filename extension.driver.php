@@ -10,12 +10,12 @@
 		public function about() {
 			return array(
 				'name'			=> 'Sitemap XML Ping',
-				'version'		=> '1.0',
-				'release-date'	=> '2012-01-18',
+				'version'		=> '1.1',
+				'release-date'	=> '2017-07-15',
 				'author'		=> array(
 					array(
-						'name' => 'Phillip Gray',
-						'email' => 'phill@randb.com.au'
+						'name' => 'Phill Gray',
+						'email' => 'phill@thebold.nz'
 					),
 				),
 				'description'	=> 'Notify Google/Bing when entries in a section relating to the sitemap is updated automatically.'
@@ -84,7 +84,7 @@
 			//$input = Widget::Input('settings[sitemap_xml_ping_url]', URL.'/sitemap.xml', null, array('readonly' => 'readonly'));
 			$input = Widget::Input('settings[' . self::$config_handle . '][ping_url]', URL.'/sitemap.xml', null, array('readonly' => 'readonly'));
 			$label->appendChild($input);
-			
+
 			$group->appendChild($label);
 
 			$fieldset->appendChild($group);
@@ -95,7 +95,7 @@
 			$label = Widget::Label(__('Access Token'));
 			$input = Widget::Input('settings[' . self::$config_handle . '][access_token]', $this->get('access_token'));
 			$label->appendChild($input);
-			
+
 			$group->appendChild($label);
 
 			$fieldset->appendChild($group);
@@ -111,42 +111,42 @@
 			$sections = $this->get('ping_sections');
 			$url = $this->get('ping_url');
 			$token = $this->get('access_token');
-			
+
 			// Check the Entry is being edited in the right section, otherwise return
 			if($context['section']->get('id') != $sections) return;
 
 			// Make sure a Ping URL is set.
 			if(is_null($url)) return;
-			
+
 			// Make sure a Token is set.
 			if(is_null($token)) return;
-			
+
 			// Update sitemap first
 			$s = new Gateway;
 			$s->init(URL . '/symphony/extension/sitemap_xml/raw/?auth-token='.$token);
-			
+
 			// Catch the result.
 			$s_result = $s->exec();
 			if(isset(Symphony::$Log)) Symphony::$Log->pushToLog(__('Sitemap XML: ') . $s_result, E_USER_NOTICE, true);
 			$s_info = $s->getInfoLast();
-			
+
 			// Google
 			$g = new Gateway;
-			$g->init('http://www.google.com/webmasters/sitemaps/ping?sitemap=' . $url);
-			
+			$g->init('http://www.google.com/webmasters/tools/ping?sitemap=' . $url);
+
 			$g_result = $g->exec();
 			if(isset(Symphony::$Log)) Symphony::$Log->pushToLog(__('Sitemap XML Ping: (Google) ') . $g_result, E_USER_NOTICE, true);
 			$g_info = $g->getInfoLast();
-			
-			
+
+
 			// Bing
 			$b = new Gateway;
 			$b->init('http://www.bing.com/webmaster/ping.aspx?siteMap=' . $url);
-			
+
 			$b_result = $b->exec();
 			if(isset(Symphony::$Log)) Symphony::$Log->pushToLog(__('Sitemap XML Ping: (Bing) ') . $b_result, E_USER_NOTICE, true);
 			$b_info = $b->getInfoLast();
-			
+
 			return $g_info['http_code'] == 200 && $b_info['http_code'] == 200;
 		}
 	}
